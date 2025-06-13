@@ -148,7 +148,7 @@ Always review results carefully before deletion. The tool is designed to be safe
 
 ## Contributing
 
-Issues and pull requests welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Pull requests welcome! This is a community tool - feel free to improve it.
 
 ## License
 
