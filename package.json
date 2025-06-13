@@ -13,6 +13,14 @@
   "keywords": ["wappler", "cleanup", "cli", "maintenance", "server-actions", "unused-files"],
   "author": "Wappler Community",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kars-h/wappler-cleanup-tool.git"
+  },
+  "homepage": "https://github.com/kars-h/wappler-cleanup-tool#readme",
+  "bugs": {
+    "url": "https://github.com/kars-h/wappler-cleanup-tool/issues"
+  },
   "dependencies": {
     "inquirer": "^8.2.6",
     "chalk": "^4.1.2",
