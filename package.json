@@ -1,0 +1,26 @@
+{
+  "name": "wappler-cleanup-tool",
+  "version": "1.0.0",
+  "description": "Interactive CLI tool to identify and cleanup unused resources in Wappler projects",
+  "main": "bin/cli.js",
+  "bin": {
+    "wappler-cleanup": "./bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["wappler", "cleanup", "cli", "maintenance", "server-actions", "unused-files"],
+  "author": "Wappler Community",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^8.2.6",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.1.1",
+    "commander": "^11.1.0",
+    "table": "^6.8.1",
+    "keypress": "^0.2.1"
+  }
+}

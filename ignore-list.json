@@ -1,0 +1,12 @@
+{
+  "ignored": [
+    "/api/bentest",
+    "/api/kars-test-sandbox",
+    "/api/template-bull-job",
+    "/api/template-crud-retrieve",
+    "/api/template-crud-update",
+    "/api/test-schedule"
+  ],
+  "lastUpdated": "2025-06-13T12:55:39.858Z",
+  "version": "1.0.0"
+}

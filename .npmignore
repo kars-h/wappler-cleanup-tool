@@ -1,0 +1,36 @@
+# Source control
+.git/
+.gitignore
+
+# Development files
+*.md
+docs/
+.github/
+
+# Tests
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Project-specific files
+server-action-analysis-*.json
+test-results.json
+ignore-list.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+.nyc_output
