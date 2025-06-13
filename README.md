@@ -4,7 +4,8 @@ Interactive CLI tool to identify and safely cleanup unused resources in your Wap
 
 ## Features
 
-- 🔍 **Smart Detection**: Finds server actions in `/app/api/` and `/app/lib/`
+- 🔍 **Smart Detection**: Finds unused server actions in `/app/api/` and `/app/lib/`
+- 🛣️ **Dead Routes Detection**: Finds routes in `routes.json` that reference missing files
 - 🎯 **Multi-Pattern Scanning**: Detects references in HTML, EJS, JSON, and JavaScript files
 - 🔗 **Queue-Aware**: Identifies Bull queue `api_file` references (critical for background jobs)
 - 📁 **Empty Folder Cleanup**: Detects and removes empty directories
@@ -48,9 +49,9 @@ wappler-cleanup --project-root /path/to/wappler/project
 ## How It Works
 
 ### 1. Discovery Phase
-- Scans `/app/api/**/*.json` and `/app/lib/**/*.json`
-- Only includes files with `exec` or `steps` (actual server actions)
-- Detects empty folders that can be safely removed
+- **Server Actions**: Scans `/app/api/**/*.json` and `/app/lib/**/*.json` for files with `exec` or `steps`
+- **Dead Routes**: Scans `app/config/routes.json` for routes pointing to missing files
+- **Empty Folders**: Detects directories that can be safely removed
 
 ### 2. Reference Detection
 The tool looks for these patterns:
@@ -96,9 +97,10 @@ The tool looks for these patterns:
 ✅ Used actions: 180
 ⚠️  Review needed: 45  
 🗑️ Safe to delete: 20
+🛣️ Dead routes: 8
 📁 Empty folders: 5
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Total actions: 245
+Total items: 258
 ```
 
 ## What Would You Like to Do?
@@ -108,13 +110,10 @@ Total actions: 245
 - 💾 Export results to JSON
 - 👋 Exit
 
-## Common Use Cases
+## Use Cases
 
-1. **Initial Cleanup**: Run after project development to remove test/debug actions
-2. **Pre-Deployment**: Clean unused actions before production deployment  
-3. **Code Review**: Export results for team review of potentially unused code
-4. **Maintenance**: Regular cleanup to keep codebase lean
-5. **Folder Management**: Remove empty directories after file cleanup
+- **Project Maintenance**: Keep your Wappler project clean and organized
+- **Performance**: Remove unused code that might affect build times or deployment size
 
 ## Edge Cases Handled
 
