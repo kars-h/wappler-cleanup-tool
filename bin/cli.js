@@ -62,6 +62,31 @@ program
     console.log(chalk.green(`deletion-candidates.json updated: ${newCount} total items`));
   });
 
+program
+  .command('verify-canary')
+  .description('Query Better Stack for CANARY_HIT events and classify candidates')
+  .requiredOption('--target <path>', 'target repo with deletion-candidates.json')
+  .option('--betterstack-table <table>', 'Better Stack table', 'tXXXXXX.example_app')
+  .action(async (opts) => {
+    const { classifyCandidates, queryCanaryHits } = require('../lib/canary-verifier');
+    const candidatesPath = path.join(path.resolve(opts.target), 'deletion-candidates.json');
+    const candidates = await fs.readJson(candidatesPath);
+
+    const client = new (require('../lib/betterstack-client').BetterStackClient)({ table: opts.betterstackTable });
+    const hits = await queryCanaryHits(client, candidates.items.map(i => i.path));
+    const today = new Date().toISOString().slice(0, 10);
+    const { cleared, stillHit, stillWatching } = classifyCandidates(candidates, hits, today);
+
+    console.log(chalk.green(`\nCleared (${cleared.length}): safe to delete`));
+    for (const c of cleared) console.log(`  ${c.path}`);
+
+    console.log(chalk.red(`\nStill hit (${stillHit.length}): do NOT delete`));
+    for (const c of stillHit) console.log(`  ${c.path}  (${c.canary_hits} hits)`);
+
+    console.log(chalk.yellow(`\nStill watching (${stillWatching.length}): soak not yet complete`));
+    for (const c of stillWatching) console.log(`  ${c.path}  (${c.days_remaining} days remaining)`);
+  });
+
 program.parse();
 
 async function runLegacyInteractive(options) {
