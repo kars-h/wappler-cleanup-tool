@@ -46,6 +46,26 @@ wappler-cleanup --non-interactive --output results.json
 wappler-cleanup --project-root /path/to/wappler/project
 ```
 
+## Layered-confidence workflow (for production deletion)
+
+Static analysis alone can have false positives on runtime-dispatched code (queue modules, middleware-registered routes). For high-stakes deletion, layer in prod telemetry and a canary step:
+
+```bash
+# One-shot: static + Better Stack 90d + test grep
+wappler-cleanup scan --full --output report.json
+
+# Promote "stageable" items into deletion-candidates.json on the target repo
+wappler-cleanup stage --report report.json --target ~/path/to/app
+
+# After the soak window (7/14/30 days based on risk tier):
+wappler-cleanup verify-canary --target ~/path/to/app
+wappler-cleanup delete --target ~/path/to/app --confirmed
+```
+
+Requires:
+- `BETTERSTACK_TOKEN` env var (for Signal 2 + canary queries)
+- The target app must have the canary-logger middleware installed (see `docs/canary-middleware.md` in the target repo).
+
 ## How It Works
 
 ### 1. Discovery Phase
