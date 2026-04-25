@@ -1,63 +1,50 @@
 # Setup Instructions
 
-## GitHub Repository
-✅ **Repository created**: https://github.com/kars-h/wappler-cleanup-tool
-✅ **Code pushed**: Initial commit completed
+## Local development
 
-## Publishing to npm
-
-### Manual Publishing
 ```bash
-cd /path/to/wappler-cleanup-tool
+git clone <this-repo>
+cd wappler-cleanup-tool
+npm install
+node bin/cli.js --help
+```
+
+## Publishing to npm (maintainers only)
+
+```bash
 ./publish.sh
 ```
 
-### OR Step by Step
+Or manually:
+
 ```bash
-cd /path/to/wappler-cleanup-tool
 npm install
 npm publish --access public
 ```
 
-## Testing Installation
+## Testing the install
 
-### Global Install
 ```bash
 npm install -g wappler-cleanup-tool
 wappler-cleanup --help
 ```
 
-### Test on example-app
 ```bash
-cd /path/to/example-app
+cd /path/to/your/wappler/project
 wappler-cleanup
 ```
 
-### npx Usage
+Or run without installing:
+
 ```bash
-cd /path/to/example-app
+cd /path/to/your/wappler/project
 npx wappler-cleanup-tool
 ```
 
-## Post-Publication Checklist
+## Release workflow
 
-- [ ] Test global installation
-- [ ] Test npx usage
-- [ ] Verify it works on example-app
-- [ ] Update example-app team on new tool location
-- [ ] Add GitHub repo to Wappler community resources
-
-## Repository Links
-
-- **GitHub**: https://github.com/kars-h/wappler-cleanup-tool
-- **npm**: https://www.npmjs.com/package/wappler-cleanup-tool (after publishing)
-
-## Development Workflow
-
-For future updates:
-1. Make changes in `/path/to/wappler-cleanup-tool/`
-2. Test on example-app project
-3. Bump version: `npm version patch` (or minor/major)
-4. Commit changes: `git add . && git commit -m "feat: your changes"`
-5. Push to GitHub: `git push`
-6. Publish to npm: `./publish.sh`
+1. Make changes on a feature branch.
+2. `npm test` — verify all unit tests pass.
+3. `npm version patch` (or `minor` / `major`).
+4. `git push --follow-tags`.
+5. `./publish.sh`.

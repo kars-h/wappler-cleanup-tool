@@ -12,6 +12,15 @@ program
   .version('1.0.0')
   .description('Wappler Project Cleanup Tool');
 
+function resolveBetterstackTable(opts) {
+  const table = opts.betterstackTable || process.env.BETTERSTACK_TABLE;
+  if (!table) {
+    console.error(chalk.red('Error: --betterstack-table <table> or BETTERSTACK_TABLE env var is required.'));
+    process.exit(1);
+  }
+  return table;
+}
+
 // Default subcommand: legacy interactive cleanup
 program
   .command('clean', { isDefault: true })
@@ -27,7 +36,7 @@ program
   .description('Static-analysis scan (Signal 1 only)')
   .option('--full', 'also run Signal 2 (Better Stack) + Signal 3 (tests)')
   .option('--project-root <path>', 'project root', process.cwd())
-  .option('--betterstack-table <table>', 'Better Stack table name', 'tXXXXXX.example_app')
+  .option('--betterstack-table <table>', 'Better Stack table name (or set BETTERSTACK_TABLE env var)')
   .option('--output <file>', 'write JSON report to file')
   .action(async (opts) => {
     const projectRoot = path.resolve(opts.projectRoot);
@@ -35,7 +44,7 @@ program
 
     if (opts.full) {
       console.log(chalk.gray('Running full scan (static + telemetry + tests)...'));
-      results = await runFullScan({ projectRoot, betterstackTable: opts.betterstackTable });
+      results = await runFullScan({ projectRoot, betterstackTable: resolveBetterstackTable(opts) });
     } else {
       const scanner = new Scanner(projectRoot);
       results = await scanner.scan();
@@ -66,13 +75,13 @@ program
   .command('verify-canary')
   .description('Query Better Stack for CANARY_HIT events and classify candidates')
   .requiredOption('--target <path>', 'target repo with deletion-candidates.json')
-  .option('--betterstack-table <table>', 'Better Stack table', 'tXXXXXX.example_app')
+  .option('--betterstack-table <table>', 'Better Stack table (or set BETTERSTACK_TABLE env var)')
   .action(async (opts) => {
     const { classifyCandidates, queryCanaryHits } = require('../lib/canary-verifier');
     const candidatesPath = path.join(path.resolve(opts.target), 'deletion-candidates.json');
     const candidates = await fs.readJson(candidatesPath);
 
-    const client = new (require('../lib/betterstack-client').BetterStackClient)({ table: opts.betterstackTable });
+    const client = new (require('../lib/betterstack-client').BetterStackClient)({ table: resolveBetterstackTable(opts) });
     const hits = await queryCanaryHits(client, candidates.items.map(i => i.path));
     const today = new Date().toISOString().slice(0, 10);
     const { cleared, stillHit, stillWatching } = classifyCandidates(candidates, hits, today);
@@ -91,7 +100,7 @@ program
   .command('delete')
   .description('Delete action files whose canary has cleared')
   .requiredOption('--target <path>', 'target repo')
-  .option('--betterstack-table <table>', 'Better Stack table', 'tXXXXXX.example_app')
+  .option('--betterstack-table <table>', 'Better Stack table (or set BETTERSTACK_TABLE env var)')
   .option('--confirmed', 'actually delete (without this flag, prints what would be deleted)')
   .action(async (opts) => {
     const { classifyCandidates, queryCanaryHits } = require('../lib/canary-verifier');
@@ -99,7 +108,7 @@ program
 
     const targetRepo = path.resolve(opts.target);
     const candidates = await fs.readJson(path.join(targetRepo, 'deletion-candidates.json'));
-    const client = new (require('../lib/betterstack-client').BetterStackClient)({ table: opts.betterstackTable });
+    const client = new (require('../lib/betterstack-client').BetterStackClient)({ table: resolveBetterstackTable(opts) });
     const hits = await queryCanaryHits(client, candidates.items.map(i => i.path));
     const today = new Date().toISOString().slice(0, 10);
     const { cleared } = classifyCandidates(candidates, hits, today);

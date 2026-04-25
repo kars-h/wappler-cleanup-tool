@@ -64,7 +64,8 @@ wappler-cleanup delete --target ~/path/to/app --confirmed
 
 Requires:
 - `BETTERSTACK_TOKEN` env var (for Signal 2 + canary queries)
-- The target app must have the canary-logger middleware installed (see `docs/canary-middleware.md` in the target repo).
+- `BETTERSTACK_TABLE` env var (or pass `--betterstack-table <table>` to each command) — the Better Stack source table for your app's HTTP logs
+- The target app must have the canary-logger middleware installed (writes `CANARY_HIT` events for any path listed in its `deletion-candidates.json`).
 
 ## How It Works
 

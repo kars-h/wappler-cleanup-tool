@@ -42,6 +42,8 @@ jspm_packages/
 # Project-specific analysis files
 server-action-analysis-*.json
 test-results.json
+ignore-list.json
+.wappler-cleanup-ignore.json
 
 # IDE
 .vscode/

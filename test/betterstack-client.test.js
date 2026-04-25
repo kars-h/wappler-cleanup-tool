@@ -29,7 +29,7 @@ test('getHitCounts returns hit map for known paths', async () => {
   const client = new BetterStackClient({
     token: 'test-token',
     endpoint: 'https://example.test/query',
-    table: 'tXXXXXX.example_app',
+    table: 'tXXXXXX.example_table',
   });
   const result = await client.getHitCounts(['/api/v1/foo', '/api/v1/bar', '/api/v1/missing'], 90);
 

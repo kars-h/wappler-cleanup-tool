@@ -13,10 +13,11 @@ tests/
 *.test.js
 *.spec.js
 
-# Project-specific files
+# Project-specific files (defensive — these should never live in the tool repo)
 server-action-analysis-*.json
 test-results.json
 ignore-list.json
+.wappler-cleanup-ignore.json
 
 # IDE
 .vscode/
