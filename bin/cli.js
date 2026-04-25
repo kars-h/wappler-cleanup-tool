@@ -49,6 +49,19 @@ program
     }
   });
 
+program
+  .command('stage')
+  .description('Promote scan --full results into deletion-candidates.json')
+  .requiredOption('--report <file>', 'path to scan --full JSON report')
+  .requiredOption('--target <path>', 'target repo containing deletion-candidates.json')
+  .action(async (opts) => {
+    const { stageCandidates } = require('../lib/stager');
+    const report = await fs.readJson(opts.report);
+    const updated = await stageCandidates({ fullScanReport: report, targetRepo: path.resolve(opts.target) });
+    const newCount = updated.items.length;
+    console.log(chalk.green(`deletion-candidates.json updated: ${newCount} total items`));
+  });
+
 program.parse();
 
 async function runLegacyInteractive(options) {
