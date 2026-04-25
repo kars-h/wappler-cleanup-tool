@@ -87,6 +87,46 @@ program
     for (const c of stillWatching) console.log(`  ${c.path}  (${c.days_remaining} days remaining)`);
   });
 
+program
+  .command('delete')
+  .description('Delete action files whose canary has cleared')
+  .requiredOption('--target <path>', 'target repo')
+  .option('--betterstack-table <table>', 'Better Stack table', 'tXXXXXX.example_app')
+  .option('--confirmed', 'actually delete (without this flag, prints what would be deleted)')
+  .action(async (opts) => {
+    const { classifyCandidates, queryCanaryHits } = require('../lib/canary-verifier');
+    const { performDeletion } = require('../lib/deleter');
+
+    const targetRepo = path.resolve(opts.target);
+    const candidates = await fs.readJson(path.join(targetRepo, 'deletion-candidates.json'));
+    const client = new (require('../lib/betterstack-client').BetterStackClient)({ table: opts.betterstackTable });
+    const hits = await queryCanaryHits(client, candidates.items.map(i => i.path));
+    const today = new Date().toISOString().slice(0, 10);
+    const { cleared } = classifyCandidates(candidates, hits, today);
+
+    if (cleared.length === 0) {
+      console.log(chalk.yellow('Nothing cleared for deletion yet.'));
+      return;
+    }
+
+    console.log(chalk.green(`Cleared for deletion (${cleared.length}):`));
+    for (const c of cleared) console.log(`  ${c.path}`);
+
+    if (!opts.confirmed) {
+      console.log(chalk.gray('\nDry run. Re-run with --confirmed to perform deletion.'));
+      return;
+    }
+
+    const { deleted } = await performDeletion({ targetRepo, cleared });
+    console.log(chalk.green(`\nDeleted ${deleted.length} files:`));
+    for (const f of deleted) console.log(`  ${f}`);
+
+    console.log(chalk.cyan(`\nNext: review, then commit:`));
+    console.log(chalk.cyan(`  cd ${targetRepo}`));
+    console.log(chalk.cyan(`  git add -A`));
+    console.log(chalk.cyan(`  git commit -m "chore: remove ${deleted.length} unused server actions (canary-cleared)"`));
+  });
+
 program.parse();
 
 async function runLegacyInteractive(options) {
